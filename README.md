@@ -6,7 +6,7 @@ Persistent storage copy in JSON format for serializable in-memory data
 [![License](https://img.shields.io/crates/l/jsave.svg?style=flat)](https://github.com/EAimTY/jsave/blob/master/LICENSE)
 
 ## Design
-Just like `RwLock`, jsave is a reader-writer lock, but serializes and saves data to a file in json format on every writing operation finish
+Just like `RwLock`, jsave is a reader-writer lock, but automatically serializes and saves data to a file in json format on every writing operation finish
 
 **Do not use it unless you only want to persist a tiny amount of data**
 
@@ -47,12 +47,12 @@ let db = Jsave::init_with(data, "db_file").unwrap();
     db_write.data.insert("foo".to_owned(), 114514);
     println!("{:?}", *db_write);
 
-    // Automatically saving data to file when the `JsaveWriteGuard` is dropped
+    // Automatically saving data to the file when `JsaveWriteGuard` dropped
 }
 
 drop(db);
 
-// Initialize a new Jsave instance from a file
+// Initialize a new Jsave instance from a file. Type annotation is needed
 let db = Jsave::<Data>::init("db_file").unwrap();
 
 let db_read = db.read();
