@@ -1,11 +1,12 @@
 [package]
 name = "jsave"
-description = "Persistent storage copy in JSON format for serializable in-memory data"
-categories = ["database-implementations"]
+description = "Persist serializable in-memory data in JSON format"
+categories = ["database", "database-implementations"]
 keywords = ["database", "json", "serde"]
 version = "0.1.1"
 authors = ["EAimTY <ea.imty@gmail.com>"]
 edition = "2021"
+rust-version = "1.59"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/EAimTY/jsave"
@@ -17,11 +18,13 @@ serde_json = "1.0"
 
 [features]
 default = []
-nightly = ["parking_lot/nightly", "serde/unstable"]
-send_guard = ["parking_lot/send_guard"]
 pretty = []
+send_guard = ["parking_lot/send_guard"]
 preserve_order = ["serde_json/preserve_order"]
 float_roundtrip = ["serde_json/float_roundtrip"]
 arbitrary_precision = ["serde_json/arbitrary_precision"]
 raw_value = ["serde_json/raw_value"]
 unbounded_depth = ["serde_json/unbounded_depth"]
+
+[package.metadata.docs.rs]
+all-features = true

@@ -1,62 +1,59 @@
 # jsave
-Persistent storage copy in JSON format for serializable in-memory data
+Persist serializable in-memory data in JSON format
 
 [![Version](https://img.shields.io/crates/v/jsave.svg?style=flat)](https://crates.io/crates/jsave)
 [![Documentation](https://img.shields.io/badge/docs-release-brightgreen.svg?style=flat)](https://docs.rs/jsave)
 [![License](https://img.shields.io/crates/l/jsave.svg?style=flat)](https://github.com/EAimTY/jsave/blob/master/LICENSE)
 
-## Design
-Just like `RwLock`, jsave is a reader-writer lock, but automatically serializes and saves data to a file in json format on every writing operation finish
+**Do not use jsave unless you only have a small amount of data. It is not really IO-efficient. Use a proper database like SQLite instead**
 
-**Do not use it unless you only want to persist a tiny amount of data**
+jsave provides `RwLock`, `Mutex` and `ReentrantMutex`, which are wraps of those in [parking_lot](https://github.com/Amanieu/parking_lot), with addition APIs to serialize and store in-memory data to file
 
 ## Usage
 ```rust
-use serde_derive::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
+use std::{collections::HashMap, io};
 
 // Data to be persisted. Needs to be serializable and deserializable
 #[derive(Debug, Serialize, Deserialize)]
-struct Data {
-    data: HashMap<String, usize>,
+struct Data(HashMap<String, usize>);
+
+impl Default for Data {
+    fn default() -> Self {
+        Self(HashMap::new())
+    }
 }
 
-let data = Data {
-    data: HashMap::new(),
-};
+fn main() -> io::Result<()> {
+    let path = "PATH_TO_DB_FILE";
 
-use std::fs::File;
+    use jsave::Mutex;
+    use std::fs::OpenOptions;
 
-// Create the file for storing the data
-File::create("db_file").unwrap();
+    // Open the database file, or create it if it doesn't exist
+    let db = if OpenOptions::new()
+        .create_new(true)
+        .write(true)
+        .open(&path)
+        .is_ok()
+    {
+        Mutex::init_with(Data::default(), path)?
+    } else {
+        Mutex::init(path)?
+    };
 
-use jsave::Jsave;
+    {
+        // Read and write data just like a regular `Mutex`
+        let mut db = db.lock();
+        db.0.insert("foo".to_string(), 114514);
+        println!("{:?}", *db);
+    }
 
-// Initialize a new Jsave instance with the given data. Note that the file will be truncated
-let db = Jsave::init_with(data, "db_file").unwrap();
+    // Save the data onto the disk. The `Mutex` is locked until the save is complete
+    db.save()?;
 
-{
-    // Read data
-    let db_read = db.read();
-    println!("{:?}", *db_read);
+    Ok(())
 }
-
-{
-    // Read and write data
-    let mut db_write = db.write();
-    db_write.data.insert("foo".to_owned(), 114514);
-    println!("{:?}", *db_write);
-
-    // Automatically saving data to the file when `JsaveWriteGuard` dropped
-}
-
-drop(db);
-
-// Initialize a new Jsave instance from a file. Type annotation is needed
-let db = Jsave::<Data>::init("db_file").unwrap();
-
-let db_read = db.read();
-println!("{:?}", *db_read);
 ```
 
 ## License
