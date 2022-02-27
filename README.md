@@ -56,5 +56,14 @@ fn main() -> io::Result<()> {
 }
 ```
 
+## Optional Features
+
+- `pretty` - Store the data as a pretty-printed String of JSON
+- `send_guard` - Allow lock guards to be sent to other threads
+- `preserve_order` - Read data into a Value and written back to a JSON string while preserving the order of map keys in the input
+- `float_roundtrip` - Use sufficient precision when parsing fixed precision floats from JSON to ensure that they maintain accuracy when round-tripped through JSON. This comes at an approximately 2x performance cost for parsing floats compared to the default best-effort precision
+- `arbitrary_precision` - Use an arbitrary precision number representation for serde_json::Number. This allows JSON numbers of arbitrary size/precision to be read into a Number and written back to a JSON string without loss of precision
+- `unbounded_depth` - Provide a method disable_recursion_limit to parse arbitrarily deep JSON structures without any consideration for overflowing the stack
+
 ## License
 GNU General Public License v3.0
