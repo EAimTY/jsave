@@ -13,8 +13,11 @@ repository = "https://github.com/EAimTY/jsave"
 
 [dependencies]
 parking_lot = "0.12"
-serde = { version = "1.0", features = ["derive"] }
+serde = "1.0"
 serde_json = "1.0"
+
+[dev-dependencies]
+serde = { version = "1.0", features = ["derive"] }
 
 [features]
 default = []

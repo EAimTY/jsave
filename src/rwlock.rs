@@ -257,21 +257,25 @@ where
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn force_unlock_read(&self) {
         self.data.force_unlock_read()
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn force_unlock_write_and_save(&self) {
         self.data.force_unlock_write()
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn force_unlock_read_fair(&self) {
         self.data.force_unlock_read_fair()
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn force_unlock_write_and_save_fair(&self) {
         self.data.force_unlock_write_fair()
     }

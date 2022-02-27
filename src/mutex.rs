@@ -134,11 +134,13 @@ where
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn force_unlock(&self) {
         self.data.force_unlock()
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn force_unlock_fair(&self) {
         self.data.force_unlock_fair()
     }
