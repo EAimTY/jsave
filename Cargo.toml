@@ -11,10 +11,18 @@ license = "GPL-3.0-or-later"
 repository = "https://github.com/EAimTY/jsave"
 
 [dependencies]
-parking_lot = { version = "0.12", features = ["send_guard"] }
-serde = "1.0"
+parking_lot = "0.12"
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
 
-[dev-dependencies]
-serde_derive = "1.0"
+[features]
+default = []
+nightly = ["parking_lot/nightly", "serde/unstable"]
+send_guard = ["parking_lot/send_guard"]
+pretty = []
+preserve_order = ["serde_json/preserve_order"]
+float_roundtrip = ["serde_json/float_roundtrip"]
+arbitrary_precision = ["serde_json/arbitrary_precision"]
+raw_value = ["serde_json/raw_value"]
+unbounded_depth = ["serde_json/unbounded_depth"]
