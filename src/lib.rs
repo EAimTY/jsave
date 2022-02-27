@@ -1,23 +1,14 @@
 #![doc = include_str!("../README.md")]
 
-mod mutex;
+pub mod mutex;
 pub mod rwlock;
 
-pub use crate::rwlock::RwLock;
+pub use crate::{mutex::Mutex, rwlock::RwLock};
 
 use serde::{Deserialize, Serialize};
-use std::{fs::OpenOptions, io, path::Path};
-use thiserror::Error;
+use std::{fs::OpenOptions, io::Result, path::Path};
 
-#[derive(Error, Debug)]
-pub enum Error {
-    #[error(transparent)]
-    Io(#[from] io::Error),
-    #[error(transparent)]
-    Serde(#[from] serde_json::Error),
-}
-
-fn save_data_to_path<T>(data: &T, path: &Path) -> Result<(), Error>
+fn save_data_to_path<T>(data: &T, path: &Path) -> Result<()>
 where
     T: Serialize + for<'de> Deserialize<'de> + ?Sized,
 {

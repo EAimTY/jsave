@@ -1,4 +1,3 @@
-use crate::Error;
 use parking_lot::{
     MappedRwLockReadGuard as InnerMappedRwLockReadGuard,
     MappedRwLockWriteGuard as InnerMappedRwLockWriteGuard, RwLock as InnerRwLock,
@@ -10,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     fmt::{Debug, Display, Formatter, Result as FmtResult},
     fs::OpenOptions,
+    io::Error,
     ops::{Deref, DerefMut},
     path::{Path, PathBuf},
     time::{Duration, Instant},
@@ -282,26 +282,7 @@ where
     T: Debug + Serialize + for<'de> Deserialize<'de> + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        match self.try_read() {
-            Some(guard) => f
-                .debug_struct("RwLock")
-                .field("file_path", &self.file_path)
-                .field("data", &guard)
-                .finish(),
-            None => {
-                struct LockedPlaceholder;
-                impl Debug for LockedPlaceholder {
-                    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-                        f.write_str("<locked>")
-                    }
-                }
-
-                f.debug_struct("RwLock")
-                    .field("file_path", &self.file_path)
-                    .field("data", &LockedPlaceholder)
-                    .finish()
-            }
-        }
+        self.data.fmt(f)
     }
 }
 
@@ -372,7 +353,7 @@ where
     T: Debug + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        Debug::fmt(&self.guard, f)
+        self.guard.fmt(f)
     }
 }
 
@@ -381,7 +362,7 @@ where
     T: Display + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        self.guard.deref().fmt(f)
+        self.guard.fmt(f)
     }
 }
 
@@ -477,7 +458,7 @@ where
     T: Debug + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        Debug::fmt(&self.guard, f)
+        self.guard.fmt(f)
     }
 }
 
@@ -486,7 +467,7 @@ where
     T: Display + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        self.guard.deref().fmt(f)
+        self.guard.fmt(f)
     }
 }
 
@@ -619,7 +600,7 @@ where
     T: Debug + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        Debug::fmt(&self.guard, f)
+        self.guard.fmt(f)
     }
 }
 
@@ -628,7 +609,7 @@ where
     T: Display + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        self.guard.deref().fmt(f)
+        self.guard.fmt(f)
     }
 }
 
@@ -672,7 +653,7 @@ where
     T: Debug + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        Debug::fmt(&self.0, f)
+        self.0.fmt(f)
     }
 }
 
@@ -681,7 +662,7 @@ where
     T: Display + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        self.0.deref().fmt(f)
+        self.0.fmt(f)
     }
 }
 
@@ -725,7 +706,7 @@ where
     T: Debug + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        Debug::fmt(&self.0, f)
+        self.0.fmt(f)
     }
 }
 
@@ -734,7 +715,7 @@ where
     T: Display + ?Sized,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        self.0.deref().fmt(f)
+        self.0.fmt(f)
     }
 }
 
