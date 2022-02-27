@@ -1,9 +1,10 @@
 #![doc = include_str!("../README.md")]
 
 pub mod mutex;
+pub mod remutex;
 pub mod rwlock;
 
-pub use crate::{mutex::Mutex, rwlock::RwLock};
+pub use crate::{mutex::Mutex, remutex::ReentrantMutex, rwlock::RwLock};
 
 use serde::{Deserialize, Serialize};
 use std::{fs::OpenOptions, io::Result, path::Path};
